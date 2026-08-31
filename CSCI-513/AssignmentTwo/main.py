@@ -32,7 +32,21 @@ def prompt_for_action_and_execute():
 def add_bookmark():
     title = input("Enter the title of the bookmark: ")
     url = input("Enter the URL of the bookmark: ")
-    category = input("Enter the category of the bookmark: ")
+    category_raw = input("Enter category, 1 for Wishlist, 2 for Work, 3 for Playlist, 4 for Miscellaneous: ")
+
+    try:
+        category = int(category_raw)
+    except ValueError:
+        print("Invalid input: Please enter a valid number.")
+        return
+
+    if category in {member.value for member in Category}:
+        bookmark = Bookmark(title, url, category)
+        bookmarks[Category(category).value].append(bookmark)
+        return
+    else:
+        print("No such category.")
+
     bookmark = Bookmark(title, url, category)
     bookmarks[Category(category).value].append(bookmark)
     print(f"Bookmark '{title}' added successfully!")
