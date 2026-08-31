@@ -1,21 +1,8 @@
 # CSCI 513.01W – Python Programming for AI**
 # Student: Michael Lane
 # Assignment 2
+from pygments.unistring import xid_continue
 
-from enum import Enum
-import os
-
-class Category(Enum):
-    Wishlist = 1
-    Work = 2
-    Playlist = 3
-    Miscellaneous = 4
-
-class Bookmark:
-    def __init__(self, title, url, category):
-        self.title = title
-        self.url = url
-        self.category = category
 
 def prompt_for_action_and_execute():
     print_menu()
@@ -36,7 +23,7 @@ def get_category_from_user():
     except ValueError:
         print("Invalid input: Please enter a valid number.")
         return None
-    if category in {member.value for member in Category}:
+    if category in {member for member in category_map}:
         return category
     else:
         print("No such category.")
@@ -50,29 +37,29 @@ def add_bookmark():
     if category is None:
         return
 
-    #bookmark = Bookmark(title, url, category)
-    #bookmarks[Category(category).value].append(bookmark)
-    print(f"Bookmark '{title}' added successfully!")
+    with open(filename_map[category], "a") as file:
+        # Write text to the file (this adds it to the end)
+        file.write(f"{title} {url}\n")
 
 
 def view_bookmarks():
     category = get_category_from_user()
-
     if category is None:
         return
-
-    #for bookmark in bookmarks[category]:
-    #    print(f"{bookmark.title} {bookmark.url}")
-
+    with open(filename_map[category], "r") as file:
+        lines = file.readlines()
+        for line in lines:
+            title, url = line.strip().split(" ")
+            print(f"{title} {url}")
     print()
 
 
 def statistics():
     print("We have:\n")
-    for category in Category:
-        with open(filename_map[category.value], "r") as file:
+    for category in category_map:
+        with open(filename_map[category], "r") as file:
             lines = len(file.readlines())
-            print(f"{lines} {category.name}")
+            print(f"{lines} {category_map[category]}")
     print()
 
 operation_map = {
@@ -87,6 +74,13 @@ filename_map = {
     2: "work.txt",
     3: "playlist.txt",
     4: "miscellaneous.txt"
+}
+
+category_map = {
+    1: "Wishlist",
+    2: "Work",
+    3: "Playlist",
+    4: "Miscellaneous"
 }
 
 def initialize():
