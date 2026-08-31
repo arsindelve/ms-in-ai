@@ -3,6 +3,7 @@
 # Assignment 2
 
 from enum import Enum
+import os
 
 class Category(Enum):
     Wishlist = 1
@@ -53,8 +54,8 @@ def add_bookmark():
     if category is None:
         return
 
-    bookmark = Bookmark(title, url, category)
-    bookmarks[Category(category).value].append(bookmark)
+    #bookmark = Bookmark(title, url, category)
+    #bookmarks[Category(category).value].append(bookmark)
     print(f"Bookmark '{title}' added successfully!")
 
 
@@ -64,17 +65,20 @@ def view_bookmarks():
     if category is None:
         return
 
-    for bookmark in bookmarks[category]:
-        print(f"{bookmark.title} {bookmark.url}")
+    #for bookmark in bookmarks[category]:
+    #    print(f"{bookmark.title} {bookmark.url}")
 
     print()
 
 
 def statistics():
     print("We have:\n")
-    for category in bookmarks:
-        print(f"{Category(category).name}: {len(bookmarks[category])}")
-    print()
+    for filename in filename_map:
+        with open(filename_map[filename], "r") as file:
+            lines = file.readlines()
+            line_count = len(lines)
+            category = {member.value: member.name for member in Category}
+            print(f"{line_count} {category}")
 
 operation_map = {
     1: add_bookmark,
@@ -83,15 +87,21 @@ operation_map = {
     4: exit
 }
 
-bookmarks = {
-    1: [],
-    2: [],
-    3: [],
-    4: []
+filename_map = {
+    1: "wishlist.txt",
+    2: "work.txt",
+    3: "playlist.txt",
+    4: "miscellaneous.txt"
 }
 
 def initialize():
-    return
+    # Clean up and reset after any recent runs.
+    for filename in filename_map.values():
+        try:
+            os.remove(filename)
+        except FileNotFoundError:
+            pass
+
 
 def print_menu():
         print(f'''Welcome to the Bookmark Manager:
