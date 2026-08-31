@@ -3,6 +3,7 @@
 # Assignment 2
 from pygments.unistring import xid_continue
 
+import os
 
 def prompt_for_action_and_execute():
     print_menu()
@@ -91,13 +92,10 @@ category_counter = {
 }
 
 def initialize():
-    # Clean up and reset after any recent runs.
     for filename in filename_map.values():
-        try:
+        if not os.path.exists(filename):
             with open(filename, "w"):
-                pass  # No content written — file is created empty
-        except FileNotFoundError:
-            pass
+                pass  #
 
 
 def print_menu():

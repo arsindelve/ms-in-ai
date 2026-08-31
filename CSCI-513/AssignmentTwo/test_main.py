@@ -72,7 +72,42 @@ def assert_stat(output: str, count: int, category: str) -> None:
     assert re.search(rf"\b{count}\s+{category.lower()}\b", normalize(output)), output
 
 
+def menu_count(output: str) -> int:
+    return normalize(output).count("welcome to the bookmark manager")
+
+
 # Required behavior ---------------------------------------------------------
+
+
+def test_complete_menu_is_displayed(tmp_path: Path) -> None:
+    result = run_program(tmp_path, 4)
+
+    assert_finished_normally(result)
+    output = normalize(result.stdout)
+    assert "welcome to the bookmark manager" in output
+    assert re.search(r"\(1\)\s+add a bookmark", output)
+    assert re.search(r"\(2\)\s+statistics", output)
+    assert re.search(r"\(3\)\s+view bookmarks", output)
+    assert re.search(r"\(4\)\s+exit program", output)
+
+
+def test_add_operation_displays_all_required_prompts(tmp_path: Path) -> None:
+    result = run_program(
+        tmp_path,
+        1,
+        "PromptTitle",
+        "https://example.com/prompt",
+        1,
+        4,
+    )
+
+    assert_finished_normally(result)
+    output = normalize(result.stdout)
+    assert re.search(r"enter[^:]*title", output)
+    assert re.search(r"enter[^:]*(?:link|url)", output)
+    assert "enter category" in output
+    for category in ("wishlist", "work", "playlist", "miscellaneous"):
+        assert category in output
 
 
 def test_exit_option_stops_program_without_saving_bookmarks(tmp_path: Path) -> None:
@@ -179,6 +214,14 @@ def test_statistics_count_only_bookmarks_added_during_current_run(
     assert_stat(result.stdout, 0, "miscellaneous")
 
 
+def test_initial_statistics_are_all_zero(tmp_path: Path) -> None:
+    result = run_program(tmp_path, 2, 4)
+
+    assert_finished_normally(result)
+    for category in ("wishlist", "work", "playlist", "miscellaneous"):
+        assert_stat(result.stdout, 0, category)
+
+
 def test_view_displays_every_bookmark_in_selected_category(tmp_path: Path) -> None:
     result = run_program(
         tmp_path,
@@ -203,6 +246,20 @@ def test_view_displays_every_bookmark_in_selected_category(tmp_path: Path) -> No
     assert "https://example.com/second" in output
 
 
+@pytest.mark.parametrize(
+    ("category", "title"),
+    [(1, "WishItem"), (2, "WorkItem"), (3, "SongItem"), (4, "MiscItem")],
+)
+def test_each_category_can_be_viewed(
+    tmp_path: Path, category: int, title: str
+) -> None:
+    link = f"https://example.com/view-{category}"
+    result = run_program(tmp_path, 1, title, link, category, 3, category, 4)
+
+    assert_finished_normally(result)
+    assert f"{title.lower()} {link}" in normalize(result.stdout)
+
+
 def test_bookmark_persists_after_program_restarts(tmp_path: Path) -> None:
     # Bookmark files are persistent: a later execution must still be able to
     # view records saved by an earlier execution.
@@ -223,6 +280,39 @@ def test_bookmark_persists_after_program_restarts(tmp_path: Path) -> None:
     assert "https://example.com/persistent" in output
 
 
+def test_restart_keeps_bookmarks_but_resets_statistics(tmp_path: Path) -> None:
+    first_run = run_program(
+        tmp_path,
+        1,
+        "FirstWork",
+        "https://example.com/first-work",
+        2,
+        4,
+    )
+    second_run = run_program(
+        tmp_path,
+        1,
+        "SecondWork",
+        "https://example.com/second-work",
+        2,
+        2,
+        3,
+        2,
+        4,
+    )
+
+    assert_finished_normally(first_run)
+    assert_finished_normally(second_run)
+    assert_stat(second_run.stdout, 1, "work")
+    output = normalize(second_run.stdout)
+    assert "firstwork https://example.com/first-work" in output
+    assert "secondwork https://example.com/second-work" in output
+    assert saved_lines(tmp_path / "work.txt") == [
+        "FirstWork https://example.com/first-work",
+        "SecondWork https://example.com/second-work",
+    ]
+
+
 def test_statistics_reset_after_program_restarts(tmp_path: Path) -> None:
     # Statistics are session-only even though the bookmark files persist.
     first_run = run_program(
@@ -239,6 +329,43 @@ def test_statistics_reset_after_program_restarts(tmp_path: Path) -> None:
     assert_finished_normally(second_run)
     for category in ("wishlist", "work", "playlist", "miscellaneous"):
         assert_stat(second_run.stdout, 0, category)
+
+
+def test_menu_reappears_after_add(tmp_path: Path) -> None:
+    result = run_program(
+        tmp_path,
+        1,
+        "MenuAdd",
+        "https://example.com/menu-add",
+        1,
+        4,
+    )
+
+    assert_finished_normally(result)
+    assert menu_count(result.stdout) >= 2
+
+
+def test_menu_reappears_after_statistics(tmp_path: Path) -> None:
+    result = run_program(tmp_path, 2, 4)
+
+    assert_finished_normally(result)
+    assert menu_count(result.stdout) >= 2
+
+
+def test_menu_reappears_after_view(tmp_path: Path) -> None:
+    result = run_program(
+        tmp_path,
+        1,
+        "MenuView",
+        "https://example.com/menu-view",
+        1,
+        3,
+        1,
+        4,
+    )
+
+    assert_finished_normally(result)
+    assert menu_count(result.stdout) >= 3
 
 
 # Negative behavior ---------------------------------------------------------
