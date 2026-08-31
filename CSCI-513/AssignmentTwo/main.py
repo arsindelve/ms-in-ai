@@ -41,6 +41,8 @@ def add_bookmark():
         # Write text to the file (this adds it to the end)
         file.write(f"{title} {url}\n")
 
+    category_counter[category] += 1
+
 
 def view_bookmarks():
     category = get_category_from_user()
@@ -57,9 +59,7 @@ def view_bookmarks():
 def statistics():
     print("We have:\n")
     for category in category_map:
-        with open(filename_map[category], "r") as file:
-            lines = len(file.readlines())
-            print(f"{lines} {category_map[category]}")
+        print(f"{category_counter[category]} {category_map[category]}")
     print()
 
 operation_map = {
@@ -81,6 +81,13 @@ category_map = {
     2: "Work",
     3: "Playlist",
     4: "Miscellaneous"
+}
+
+category_counter = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0
 }
 
 def initialize():
