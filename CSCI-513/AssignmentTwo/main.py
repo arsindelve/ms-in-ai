@@ -29,36 +29,52 @@ def prompt_for_action_and_execute():
 
     prompt_for_action_and_execute()
 
-def add_bookmark():
-    title = input("Enter the title of the bookmark: ")
-    url = input("Enter the URL of the bookmark: ")
+def get_category_from_user():
     category_raw = input("Enter category, 1 for Wishlist, 2 for Work, 3 for Playlist, 4 for Miscellaneous: ")
 
     try:
         category = int(category_raw)
     except ValueError:
         print("Invalid input: Please enter a valid number.")
-        return
+        return None
 
     if category in {member.value for member in Category}:
-        bookmark = Bookmark(title, url, category)
-        bookmarks[Category(category).value].append(bookmark)
-        return
+        return category
     else:
         print("No such category.")
+        return None
+
+
+def add_bookmark():
+    title = input("Enter the title of the bookmark: ")
+    url = input("Enter the URL of the bookmark: ")
+    category = get_category_from_user()
+
+    if category is None:
+        return
 
     bookmark = Bookmark(title, url, category)
     bookmarks[Category(category).value].append(bookmark)
     print(f"Bookmark '{title}' added successfully!")
 
+
 def view_bookmarks():
-    print("Viewing bookmarks...")
+    category = get_category_from_user()
+
+    if category is None:
+        return
+
+    for bookmark in bookmarks[category]:
+        print(f"{bookmark.title} {bookmark.url}")
+
+    print()
+
 
 def statistics():
     print("We have:\n")
     for category in bookmarks:
         print(f"{Category(category).name}: {len(bookmarks[category])}")
-    print("\n")
+    print()
 
 operation_map = {
     1: add_bookmark,
@@ -74,6 +90,9 @@ bookmarks = {
     4: []
 }
 
+def initialize():
+    return
+
 def print_menu():
         print(f'''Welcome to the Bookmark Manager:
     (1) Add a bookmark
@@ -83,6 +102,7 @@ def print_menu():
     ''')
 
 if __name__ == '__main__':
+    initialize()
     prompt_for_action_and_execute()
 
 
