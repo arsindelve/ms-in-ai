@@ -1,7 +1,6 @@
-# CSCI 513.01W – Python Programming for AI**
+# CSCI 513.01W – Python Programming for AI
 # Student: Michael Lane
 # Assignment 2
-from pygments.unistring import xid_continue
 
 import os
 
@@ -9,6 +8,7 @@ def prompt_for_action_and_execute():
     print_menu()
     choice = input()
     try:
+        # Look up and execute the operation based on user input
         operation_map[int(choice)]()
     except ValueError:
         print("Invalid input: Please enter a valid number.")
@@ -37,11 +37,9 @@ def add_bookmark():
     category = get_category_from_user()
     if category is None:
         return
-
     with open(filename_map[category], "a") as file:
         # Write text to the file (this adds it to the end)
         file.write(f"{title} {url}\n")
-
     category_counter[category] += 1
 
 
@@ -52,8 +50,7 @@ def view_bookmarks():
     with open(filename_map[category], "r") as file:
         lines = file.readlines()
         for line in lines:
-            title, url = line.strip().split(" ")
-            print(f"{title} {url}")
+            print(line)
     print()
 
 
@@ -92,6 +89,7 @@ category_counter = {
 }
 
 def initialize():
+    # Create the necessary files if they don't exist
     for filename in filename_map.values():
         if not os.path.exists(filename):
             with open(filename, "w"):
