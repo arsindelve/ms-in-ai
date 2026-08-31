@@ -4,6 +4,8 @@
 
 from enum import Enum
 
+
+
 class Category(Enum):
     Wishlist = 1
     Work = 2
@@ -16,8 +18,31 @@ class Bookmark:
         self.url = url
         self.category = category
 
-def start():
+def prompt_for_action_and_execute():
     print_menu()
+    choice = input()
+    operation_map[int(choice)]()
+    prompt_for_action_and_execute()
+
+def add_bookmark():
+    title = input("Enter the title of the bookmark: ")
+    url = input("Enter the URL of the bookmark: ")
+    category = input("Enter the category of the bookmark: ")
+    bookmark = Bookmark(title, url, category)
+    print(f"Bookmark '{title}' added successfully!")
+
+def view_bookmarks():
+    print("Viewing bookmarks...")
+
+def statistics():
+    print("Statistics...")
+
+operation_map = {
+    1: add_bookmark,
+    2: statistics,
+    3: view_bookmarks,
+    4: exit
+}
 
 def print_menu():
         print(f'''Welcome to the Bookmark Manager:
@@ -28,6 +53,6 @@ def print_menu():
     ''')
 
 if __name__ == '__main__':
-    start()
+    prompt_for_action_and_execute()
 
 
