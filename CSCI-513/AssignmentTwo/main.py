@@ -4,8 +4,6 @@
 
 from enum import Enum
 
-
-
 class Category(Enum):
     Wishlist = 1
     Work = 2
@@ -35,13 +33,23 @@ def view_bookmarks():
     print("Viewing bookmarks...")
 
 def statistics():
-    print("Statistics...")
+    print("We have:\n")
+    for category in bookmarks:
+        print(f"{Category(category).name}: {len(bookmarks[category])}")
+    print("\n")
 
 operation_map = {
     1: add_bookmark,
     2: statistics,
     3: view_bookmarks,
     4: exit
+}
+
+bookmarks = {
+    1: [],
+    2: [],
+    3: [],
+    4: []
 }
 
 def print_menu():
