@@ -19,7 +19,14 @@ class Bookmark:
 def prompt_for_action_and_execute():
     print_menu()
     choice = input()
-    operation_map[int(choice)]()
+
+    try:
+        operation_map[int(choice)]()
+    except ValueError:
+        print("Invalid input: Please enter a valid number.")
+    except KeyError:
+        print("No such operation available.")
+
     prompt_for_action_and_execute()
 
 def add_bookmark():
@@ -27,6 +34,7 @@ def add_bookmark():
     url = input("Enter the URL of the bookmark: ")
     category = input("Enter the category of the bookmark: ")
     bookmark = Bookmark(title, url, category)
+    bookmarks[Category(category).value].append(bookmark)
     print(f"Bookmark '{title}' added successfully!")
 
 def view_bookmarks():
