@@ -20,25 +20,22 @@ class Bookmark:
 def prompt_for_action_and_execute():
     print_menu()
     choice = input()
-
     try:
         operation_map[int(choice)]()
     except ValueError:
         print("Invalid input: Please enter a valid number.")
     except KeyError:
         print("No such operation available.")
-
     prompt_for_action_and_execute()
+
 
 def get_category_from_user():
     category_raw = input("Enter category, 1 for Wishlist, 2 for Work, 3 for Playlist, 4 for Miscellaneous: ")
-
     try:
         category = int(category_raw)
     except ValueError:
         print("Invalid input: Please enter a valid number.")
         return None
-
     if category in {member.value for member in Category}:
         return category
     else:
@@ -50,7 +47,6 @@ def add_bookmark():
     title = input("Enter the title of the bookmark: ")
     url = input("Enter the URL of the bookmark: ")
     category = get_category_from_user()
-
     if category is None:
         return
 
@@ -73,12 +69,11 @@ def view_bookmarks():
 
 def statistics():
     print("We have:\n")
-    for filename in filename_map:
-        with open(filename_map[filename], "r") as file:
-            lines = file.readlines()
-            line_count = len(lines)
-            category = {member.value: member.name for member in Category}
-            print(f"{line_count} {category}")
+    for category in Category:
+        with open(filename_map[category.value], "r") as file:
+            lines = len(file.readlines())
+            print(f"{lines} {category.name}")
+    print()
 
 operation_map = {
     1: add_bookmark,
@@ -98,7 +93,8 @@ def initialize():
     # Clean up and reset after any recent runs.
     for filename in filename_map.values():
         try:
-            os.remove(filename)
+            with open(filename, "w"):
+                pass  # No content written — file is created empty
         except FileNotFoundError:
             pass
 
