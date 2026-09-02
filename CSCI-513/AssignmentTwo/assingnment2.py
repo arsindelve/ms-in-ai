@@ -5,16 +5,20 @@
 import os
 
 def prompt_for_action_and_execute():
-    print_menu()
-    choice = input()
-    try:
-        # Look up and execute the operation based on user input
-        operation_map[int(choice)]()
-    except ValueError:
-        print("Invalid input: Please enter a valid number.")
-    except KeyError:
-        print("No such operation available.")
-    prompt_for_action_and_execute()
+    while True:
+        print_menu()
+        choice = input()
+        try:
+            choice = int(choice)
+            if choice == 4:
+                break
+
+            # Look up and execute the operation based on user input
+            operation_map[choice]()
+        except ValueError:
+            print("Invalid input: Please enter a valid number.")
+        except KeyError:
+            print("No such operation available.")
 
 
 def get_category_from_user():
@@ -63,8 +67,7 @@ def statistics():
 operation_map = {
     1: add_bookmark,
     2: statistics,
-    3: view_bookmarks,
-    4: exit
+    3: view_bookmarks
 }
 
 filename_map = {
