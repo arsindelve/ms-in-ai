@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 
-PROGRAM = Path(__file__).with_name("main.py")
+PROGRAM = Path(__file__).with_name("assignment2.py")
 CATEGORY_FILES = {
     1: "wishlist.txt",
     2: "work.txt",
@@ -45,7 +45,6 @@ def run_program(tmp_path: Path, *answers: object) -> subprocess.CompletedProcess
 def normalize(text: str) -> str:
     """Ignore capitalization and insignificant whitespace in displayed text."""
     return " ".join(text.lower().split())
-
 
 def saved_lines(path: Path) -> list[str]:
     """Return nonblank bookmark records without their newline characters."""
