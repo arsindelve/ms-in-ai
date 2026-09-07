@@ -15,7 +15,7 @@ def initialize():
 def get_winning_team(data):
     winning_team = []
     # Skip the first line which is a header
-    for lines in data[1:2]:
+    for lines in data[1:]:
         line = lines.strip().split('\t')
         team_one = line[0]
         team_one_score = int(line[1])
