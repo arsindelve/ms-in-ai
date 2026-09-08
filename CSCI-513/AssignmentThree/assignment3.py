@@ -36,12 +36,19 @@ def count_winning_team(winning_teams):
     return team_wins
 
 
+def export_csv(winning_team_counts):
+    with open('wins.csv', 'w') as file:
+        for team, wins in winning_team_counts.items():
+            file.write(f"{team},{wins}\n")
+
+
 def go():
     data = read_file()
     if data is not None:
         winning_teams = get_winning_team(data)
         winning_team_counts = count_winning_team(winning_teams)
-        print(winning_team_counts)
+        export_csv(winning_team_counts)
+        print("Done")
 
 
 if __name__ == '__main__':
