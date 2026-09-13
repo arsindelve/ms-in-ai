@@ -1,13 +1,13 @@
 # M.S. in Artificial Intelligence
 
-Coursework from my Master of Science in Artificial Intelligence at East Texas A&M
+This is my coursework from my Master of Science in Artificial Intelligence at East Texas A&M
 University. One folder per course, each with its own README, the syllabus, and the
 assignments as submitted.
 
 ## About
 
-I'm Michael Lane — a software engineering leader with 20+ years building and scaling
-engineering organizations, currently Director of Engineering at Second Nature. My
+I'm Michael Lane, a software engineering leader with 20+ years building and scaling
+engineering organizations. My
 interests sit at the intersection of large language models, memory systems, and
 interactive, narrative-driven applications of AI. Outside of coursework, that shows up
 as [ZorkAI](https://github.com/arsindelve/ZorkAI) — an LLM-narrated take on classic
@@ -37,5 +37,5 @@ CSCI-513/
 ```
 
 Assignment folders keep the original prompt PDF alongside the code, so each one stands
-on its own — you can read what was asked and what was turned in without leaving the
+on its own. You can read what was asked and what was turned in without leaving the
 folder.
